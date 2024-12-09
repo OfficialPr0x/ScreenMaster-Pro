@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScreenMaster Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        :root {
+            --teal: #00b4b4;
+            --lime: #32cd32;
+            --dark: #1a1a1a;
+            --darker: #121212;
+            --light: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--darker);
+            color: var(--light);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--teal);
+        }
+
+        .preview-container {
+            background-color: var(--dark);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            min-height: 400px;
+            position: relative;
+            border: 2px solid rgba(0, 180, 180, 0.2);
+        }
+
+        .preview {
+            width: 100%;
+            height: 100%;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--teal), #008080);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--lime), #228B22);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .library {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .recording-card {
+            background-color: var(--dark);
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 180, 180, 0.1);
+        }
+
+        .recording-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 180, 180, 0.2);
+        }
+
+        .canvas-selector {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(26, 26, 26, 0.9);
+            padding: 0.5rem;
+            border-radius: 8px;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .monitor-selector {
+            background-color: var(--dark);
+            color: var(--light);
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--teal);
+        }
+
+        .ai-features {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: rgba(26, 26, 26, 0.9);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--teal);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--lime);
+            font-size: 0.9rem;
+        }
+
+        .pulse {
+            width: 10px;
+            height: 10px;
+            background-color: var(--lime);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(50, 205, 50, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(50, 205, 50, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(50, 205, 50, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <header class="header">
+                <div class="logo">ScreenMaster Pro</div>
+                <div class="status">
+                    <div class="pulse"></div>
+                    AI Assistant Ready
+                </div>
+            </header>
+
+            <div class="preview-container">
+                <video class="preview" id="preview"></video>
+                <div class="canvas-selector">
+                    <select class="monitor-selector">
+                        <option value="1">Monitor 1</option>
+                        <option value="2">Monitor 2</option>
+                    </select>
+                    <button class="btn btn-secondary">
+                        <i class="mdi mdi-crop"></i>
+                        Select Area
+                    </button>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary">
+                    <i class="mdi mdi-record"></i>
+                    Start Recording
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="mdi mdi-pause"></i>
+                    Pause
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="mdi mdi-stop"></i>
+                    Stop
+                </button>
+            </div>
+
+            <h2>Recent Recordings</h2>
+            <div class="library">
+                <div class="recording-card">
+                    <h3>Recording 1</h3>
+                    <p>Duration: 5:23</p>
+                </div>
+                <div class="recording-card">
+                    <h3>Recording 2</h3>
+                    <p>Duration: 3:45</p>
+                </div>
+                <div class="recording-card">
+                    <h3>Recording 3</h3>
+                    <p>Duration: 2:18</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-features">
+            <button class="btn btn-primary">
+                <i class="mdi mdi-robot"></i>
+                AI Enhancement
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            mounted() {
+                if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+                    const video = document.getElementById('preview');
+                    navigator.mediaDevices.getDisplayMedia({ video: true })
+                        .then(stream => {
+                            video.srcObject = stream;
+                            video.play();
+                        })
+                        .catch(err => {
+                            console.error("Error accessing screen capture:", err);
+                        });
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
